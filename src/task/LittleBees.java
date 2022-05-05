@@ -1,19 +1,30 @@
 package task;
 
-public class LittleBees implements Runnable{
+public class LittleBees implements Runnable {
 
-    private int workBee = 1;
-    private int amount;
+    private int workBee = 1; // сколько меда эта пчела приносит за один раз
+    private int amount = 0; // количество меда собранного этой пчелой
 
     @Override
     public void run() {
-        while (Main.potOfhoney > Main.count) {
-            Main.count += workBee;
-            System.out.println("LittleBees " + Main.count);
+        boolean flag = true;
+        while (flag) {
+            synchronized (Main.locker) { // синхронизируем объекты
+                if (Main.count < Main.potOfhoney) {
+                    Main.count += workBee;
+                    this.amount ++;
+                    System.out.println("LittleBees " + Main.count);
+                }else {
+                    flag = false;
+                }
+            }
         }
         try {
-            this.wait();
-            this.notifyAll();
+            synchronized (Main.locker) {
+                System.out.println("LittleBees заснула");
+                Main.locker.notifyAll(); // будим другие потоки
+                Main.locker.wait(); // засыпаем
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

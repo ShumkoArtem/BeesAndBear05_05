@@ -8,13 +8,23 @@ public class BigBees implements Runnable {
 
     @Override
     public void run() {
-        while (Main.potOfhoney > Main.count) {
-            Main.count += work;
-            System.out.println("BigBees " + Main.count);
+        boolean flag = true;
+        while (flag) {
+            synchronized (Main.locker) {
+                if (Main.count < Main.potOfhoney) {
+                    Main.count += work;
+                    System.out.println("BigBees " + Main.count);
+                }else {
+                    flag = false;
+                }
+            }
         }
         try {
-            this.wait();
-            this.notifyAll();
+            synchronized (Main.locker) {
+                System.out.println("BigBees заснула");
+                Main.locker.notifyAll();
+                Main.locker.wait();
+            }
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
