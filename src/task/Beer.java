@@ -11,7 +11,6 @@ public class Beer implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-
             System.out.println("Медведь проснулся!!!!!");
             Main.count = 0;
         }
