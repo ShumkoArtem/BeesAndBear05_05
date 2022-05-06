@@ -2,10 +2,10 @@ package task;
 
 public class Bees implements Runnable {
 
-
     @Override
     public void run() {
-        synchronized (Main.locker) {
+
+        for (int i = 0; i < 3; i++) {
             Thread l1 = new Thread(new LittleBees());
             Thread l2 = new Thread(new MediumBees());
             Thread l3 = new Thread(new BigBees());
@@ -13,16 +13,30 @@ public class Bees implements Runnable {
             l1.start();
             l2.start();
             l3.start();
-        }
-//        try {
-//            this.wait();
-//            this.notifyAll();
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-        if (Main.count >= Main.potOfhoney) {
-            System.out.println("Горшок полный -------------------------------");
+
+            while (Main.count < Main.potOfhoney) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            System.out.println("Горшок заполнен медом!!! ");
+
+            synchronized (Main.locker) {
+                try {
+                    Main.locker.notify();
+                    Main.locker.wait();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (i < 2) {
+                System.out.println("Пчелы проснулись");
+            }
         }
 
     }
+
 }

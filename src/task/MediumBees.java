@@ -1,7 +1,8 @@
 package task;
 
-public class MediumBees implements Runnable {
-    private int work = 2;
+public class MediumBees extends Bees {
+    private int workBeeMedium = 2;
+    private double total; // количество меда собранного этой пчелой
 
     public MediumBees() {
     }
@@ -10,22 +11,25 @@ public class MediumBees implements Runnable {
     public void run() {
         boolean flag = true;
         while (flag){
-            synchronized (Main.locker) {
+            this.total += workBeeMedium;
+            synchronized (Main.locker) { // синхронизируем объекты
                 if (Main.count < Main.potOfhoney) {
-                    Main.count += work;
-                    System.out.println("MediumBees " + Main.count);
+                    Main.count += workBeeMedium;
+
+                   // System.out.println("MediumBees " + Main.count);
                 }else {
                     flag = false;
+                    System.out.println("Medium Bee собрала : " + (total / 10) + "% меда" );
                 }
+//                    try {
+//                        System.out.println("MediumBees заснула");
+//                        locker1.wait();
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
             }
         }
-        try {
-            synchronized (Main.locker){
-                System.out.println("MediumBees заснула");
-                Main.locker.notifyAll();
-                Main.locker.wait();}
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+
     }
 }
